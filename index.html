@@ -1,76 +1,21 @@
-<script type="module">
-  // Firebase SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FanlinkPro</title>
+</head>
 
-  // 🔥 YOUR FIREBASE CONFIG
-  const firebaseConfig = {
-    apiKey: "AIzaSyA6YYx6PPtpxBoRddf",
-    authDomain: "fanlinkpro-c5ca8.firebaseapp.com",
-    projectId: "fanlinkpro-c5ca8",
-    storageBucket: "fanlinkpro-c5ca8.appspot.com",
-    messagingSenderId: "890254329454",
-    appId: "1:890254329454:web:d1f217",
-    measurementId: "G-L1BH3QGVL1"
-  };
+<body>
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  <!-- ✅ Your site content -->
+  <h1>Welcome to FanlinkPro</h1>
+  <p>Loading admin system...</p>
 
-  // 🔐 LOGIN FUNCTION (call this from your login form)
-  window.loginUser = async function(email, password) {
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const uid = userCred.user.uid;
+  <!-- ✅ Firebase script (PASTE YOUR FIREBASE CODE BELOW THIS LINE) -->
+  <script type="module">
+    // 🔥 PASTE YOUR FIREBASE CONFIG + CODE HERE
+  </script>
 
-      // Check admin role
-      const adminRef = doc(db, "admins", uid);
-      const adminSnap = await getDoc(adminRef);
-
-      if (adminSnap.exists()) {
-        // ✅ Admin
-        window.location.href = "/admin.html";
-      } else {
-        // 👤 Normal user
-        window.location.href = "/dashboard.html";
-      }
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  // 🔓 LOGOUT
-  window.logoutUser = async function() {
-    await signOut(auth);
-    window.location.href = "/login.html";
-  };
-
-  // 🔍 Protect admin page
-  window.checkAdmin = function() {
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "/login.html";
-        return;
-      }
-
-      const adminRef = doc(db, "admins", user.uid);
-      const adminSnap = await getDoc(adminRef);
-
-      if (!adminSnap.exists()) {
-        window.location.href = "/dashboard.html";
-      }
-    });
-  };
-        </script>
+</body>
+</html>
