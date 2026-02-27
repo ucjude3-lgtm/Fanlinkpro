@@ -1,121 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FanlinkPro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FanlinkPro</title>
 
-  <style>
-    body{
-      margin:0;
-      font-family:Arial, Helvetica, sans-serif;
-      background:#0b0b0b;
-      color:white;
-      text-align:center;
-    }
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-    header{
-      background:linear-gradient(90deg,#ff0080,#7928ca);
-      padding:20px;
-      font-size:24px;
-      font-weight:bold;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#0b0b0b;
+  color:white;
+  text-align:center;
+}
 
-    .container{
-      padding:40px 20px;
-    }
+header{
+  background:linear-gradient(90deg,#d4af37,#000);
+  padding:20px;
+  font-size:24px;
+  font-weight:bold;
+}
 
-    input{
-      padding:12px;
-      width:80%;
-      max-width:300px;
-      margin:10px 0;
-      border-radius:8px;
-      border:none;
-      font-size:16px;
-    }
+.container{
+  padding:20px;
+}
 
-    button{
-      padding:12px 25px;
-      border:none;
-      border-radius:8px;
-      background:#ff0080;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-      margin-top:10px;
-    }
+input,button{
+  padding:12px;
+  margin:8px;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+}
 
-    button:hover{
-      background:#e60073;
-    }
+button{
+  background:#d4af37;
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .hidden{
-      display:none;
-    }
-  </style>
+button:hover{
+  opacity:0.85;
+}
+
+#dashboard{
+  display:none;
+}
+</style>
 </head>
 
 <body>
 
 <header>FanlinkPro</header>
 
-<div class="container">
+<div class="container" id="loginBox">
+  <h2>Fan Login</h2>
 
-  <!-- FAN LOGIN -->
-  <div id="fanLogin">
-    <h2>Fan Login</h2>
-    <input type="email" id="fanEmail" placeholder="Enter your email"><br>
-    <button onclick="fanLogin()">Login as Fan</button>
-  </div>
+  <input type="email" id="email" placeholder="Enter your email"><br>
+  <button onclick="sendOTP()">Send OTP</button><br>
 
-  <!-- ADMIN LOGIN -->
-  <div id="adminLogin">
-    <h2>Admin Login</h2>
-    <input type="email" id="adminEmail" placeholder="Admin email"><br>
-    <button onclick="adminLogin()">Login as Admin</button>
-  </div>
+  <input type="text" id="otpInput" placeholder="Enter OTP"><br>
+  <button onclick="verifyOTP()">Verify & Login</button>
+</div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden">
-    <h2>✅ Dashboard</h2>
-    <p>You are logged in.</p>
-    <button onclick="logout()">Logout</button>
-  </div>
-
+<div class="container" id="dashboard">
+  <h2>✅ Dashboard</h2>
+  <p>You are logged in.</p>
+  <button onclick="logout()">Logout</button>
 </div>
 
 <script>
-  const ADMIN_EMAIL = "joescott0132@gmail.com";
+emailjs.init("i4JH-E57aOzenCmXg");
 
-  function fanLogin(){
-    const email = document.getElementById("fanEmail").value.trim();
-    if(!email){
-      alert("Enter your email");
-      return;
-    }
-    showDashboard();
+const ADMIN_EMAIL = "joescott0132@gmail.com";
+let generatedOTP = "";
+
+function sendOTP(){
+  const email = document.getElementById("email").value.trim();
+
+  if(!email){
+    alert("Enter email first");
+    return;
   }
 
-  function adminLogin(){
-    const email = document.getElementById("adminEmail").value.trim();
+  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
-    if(email === ADMIN_EMAIL){
-      showDashboard();
-    } else {
-      alert("Not authorized as admin");
-    }
-  }
+  emailjs.send("service_1h6cpga","template_qghxq0q",{
+    email: email,
+    otp: generatedOTP
+  })
+  .then(function(){
+    alert("OTP sent to your email");
+  })
+  .catch(function(error){
+    alert("Failed to send OTP");
+    console.log(error);
+  });
+}
 
-  function showDashboard(){
-    document.getElementById("fanLogin").classList.add("hidden");
-    document.getElementById("adminLogin").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-  }
+function verifyOTP(){
+  const entered = document.getElementById("otpInput").value.trim();
 
-  function logout(){
-    location.reload();
+  if(entered === generatedOTP){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("dashboard").style.display="block";
+  }else{
+    alert("Wrong OTP");
   }
+}
+
+function logout(){
+  location.reload();
+}
 </script>
 
 </body>
