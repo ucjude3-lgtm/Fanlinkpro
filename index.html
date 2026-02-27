@@ -1,121 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FanlinkPro</title>
+<script type="module">
+  // Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  // 🔥 YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6YYx6PPtpxBoRddf",
+    authDomain: "fanlinkpro-c5ca8.firebaseapp.com",
+    projectId: "fanlinkpro-c5ca8",
+    storageBucket: "fanlinkpro-c5ca8.appspot.com",
+    messagingSenderId: "890254329454",
+    appId: "1:890254329454:web:d1f217",
+    measurementId: "G-L1BH3QGVL1"
+  };
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#0b0b0b;
-  color:white;
-  text-align:center;
-}
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-header{
-  background:linear-gradient(90deg,#d4af37,#000);
-  padding:20px;
-  font-size:24px;
-  font-weight:bold;
-}
+  // 🔐 LOGIN FUNCTION (call this from your login form)
+  window.loginUser = async function(email, password) {
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
 
-.container{
-  padding:20px;
-}
+      // Check admin role
+      const adminRef = doc(db, "admins", uid);
+      const adminSnap = await getDoc(adminRef);
 
-input,button{
-  padding:12px;
-  margin:8px;
-  border:none;
-  border-radius:6px;
-  font-size:16px;
-}
+      if (adminSnap.exists()) {
+        // ✅ Admin
+        window.location.href = "/admin.html";
+      } else {
+        // 👤 Normal user
+        window.location.href = "/dashboard.html";
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
-button{
-  background:#d4af37;
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
-}
+  // 🔓 LOGOUT
+  window.logoutUser = async function() {
+    await signOut(auth);
+    window.location.href = "/login.html";
+  };
 
-button:hover{
-  opacity:0.85;
-}
+  // 🔍 Protect admin page
+  window.checkAdmin = function() {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/login.html";
+        return;
+      }
 
-#dashboard{
-  display:none;
-}
-</style>
-</head>
+      const adminRef = doc(db, "admins", user.uid);
+      const adminSnap = await getDoc(adminRef);
 
-<body>
-
-<header>FanlinkPro</header>
-
-<div class="container" id="loginBox">
-  <h2>Fan Login</h2>
-
-  <input type="email" id="email" placeholder="Enter your email"><br>
-  <button onclick="sendOTP()">Send OTP</button><br>
-
-  <input type="text" id="otpInput" placeholder="Enter OTP"><br>
-  <button onclick="verifyOTP()">Verify & Login</button>
-</div>
-
-<div class="container" id="dashboard">
-  <h2>✅ Dashboard</h2>
-  <p>You are logged in.</p>
-  <button onclick="logout()">Logout</button>
-</div>
-
-<script>
-emailjs.init("i4JH-E57aOzenCmXg");
-
-const ADMIN_EMAIL = "joescott0132@gmail.com";
-let generatedOTP = "";
-
-function sendOTP(){
-  const email = document.getElementById("email").value.trim();
-
-  if(!email){
-    alert("Enter email first");
-    return;
-  }
-
-  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-
-  emailjs.send("service_1h6cpga","template_qghxq0q",{
-    email: email,
-    otp: generatedOTP
-  })
-  .then(function(){
-    alert("OTP sent to your email");
-  })
-  .catch(function(error){
-    alert("Failed to send OTP");
-    console.log(error);
-  });
-}
-
-function verifyOTP(){
-  const entered = document.getElementById("otpInput").value.trim();
-
-  if(entered === generatedOTP){
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-  }else{
-    alert("Wrong OTP");
-  }
-}
-
-function logout(){
-  location.reload();
-}
-</script>
-
-</body>
-</html>
+      if (!adminSnap.exists()) {
+        window.location.href = "/dashboard.html";
+      }
+    });
+  };
+        </script>
