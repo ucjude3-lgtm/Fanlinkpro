@@ -8,13 +8,33 @@
 
 <body>
 
-  <!-- ✅ Your site content -->
   <h1>Welcome to FanlinkPro</h1>
   <p>Loading admin system...</p>
 
-  <!-- ✅ Firebase script (PASTE YOUR FIREBASE CODE BELOW THIS LINE) -->
+  <!-- ✅ Firebase Script -->
   <script type="module">
-    // 🔥 PASTE YOUR FIREBASE CONFIG + CODE HERE
+
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6YYx6PPtpxBoRddfcsPTw_HXllk3tuGc",
+      authDomain: "fanlinkpro-c5ca8.firebaseapp.com",
+      projectId: "fanlinkpro-c5ca8",
+      storageBucket: "fanlinkpro-c5ca8.appspot.com",
+      messagingSenderId: "890254329454",
+      appId: "1:890254329454:web:7a239f9aaada2fd646c87f",
+      measurementId: "G-JBCZC4NMX3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    console.log("🔥 Firebase connected!");
+
   </script>
 
 </body>
